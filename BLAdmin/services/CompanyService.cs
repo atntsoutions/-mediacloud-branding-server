@@ -14,8 +14,6 @@ namespace BLAdmin
         public IDictionary<string, object> List(Dictionary<string, object> SearchData)
         {
             string sWhere = "";
-
-
             Dictionary<string, object> RetData = new Dictionary<string, object>();
 
             Con_Oracle = new DBConnection();
@@ -945,6 +943,10 @@ namespace BLAdmin
         }
 
 
+        public void test1()
+        {
+
+        }
 
 
     }
