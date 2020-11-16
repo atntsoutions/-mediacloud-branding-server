@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{69B1BF9E-DD97-454F-A95F-B9642B6D151C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BLReport1</RootNamespace>
+    <AssemblyName>BLReport1</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="XL.XSheet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\XL.XSheet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="models\ArrivalNotice.cs" />
+    <Compile Include="models\Brok.cs" />
+    <Compile Include="models\CostStmt.cs" />
+    <Compile Include="models\TdsosReport.cs" />
+    <Compile Include="models\TdspaidReport.cs" />
+    <Compile Include="models\Track.cs" />
+    <Compile Include="models\Egm.cs" />
+    <Compile Include="models\GstReport.cs" />
+    <Compile Include="models\CostPendingReport.cs" />
+    <Compile Include="models\BkTeuReport.cs" />
+    <Compile Include="models\Dsr.cs" />
+    <Compile Include="models\MonthlyReport.cs" />
+    <Compile Include="models\osrep.cs" />
+    <Compile Include="models\Rebate.cs" />
+    <Compile Include="models\TeuClrReport.cs" />
+    <Compile Include="models\TonnageReport.cs" />
+    <Compile Include="models\TeuReport.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="services\ArrivalNoticeService.cs" />
+    <Compile Include="services\AuditLogService.cs" />
+    <Compile Include="services\BrokService.cs" />
+    <Compile Include="services\CostStmtService.cs" />
+    <Compile Include="services\MappingService.cs" />
+    <Compile Include="services\TdsCertReportService.cs" />
+    <Compile Include="services\TdsosReportService.cs" />
+    <Compile Include="services\TdspaidReportService.cs" />
+    <Compile Include="services\TrackService.cs" />
+    <Compile Include="services\EgmService.cs" />
+    <Compile Include="services\GstReportService.cs" />
+    <Compile Include="services\BkTeuReportService.cs" />
+    <Compile Include="services\CostPendingReportService.cs" />
+    <Compile Include="services\DsrService.cs" />
+    <Compile Include="services\MonthlyReportService.cs" />
+    <Compile Include="services\OsService.cs" />
+    <Compile Include="services\RebateService.cs" />
+    <Compile Include="services\TeuClrReportService.cs" />
+    <Compile Include="services\TonnageReportService.cs" />
+    <Compile Include="services\TeuReportService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DataBase\1DataBase.csproj">
+      <Project>{83063670-e56d-405b-8cf2-c5a350e393a0}</Project>
+      <Name>1DataBase</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
