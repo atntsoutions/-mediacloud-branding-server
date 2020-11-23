@@ -515,11 +515,15 @@ namespace BLAdmin
             string comp_code = SearchData["comp_code"].ToString();
             string type = SearchData["type"].ToString();
             string searchstring = SearchData["searchstring"].ToString().ToUpper();
+            string mrole = SearchData["mrole"].ToString().ToUpper();
+
 
             Boolean user_admin = (Boolean)SearchData["user_admin"];
             string region_id = SearchData["region_id"].ToString();
             string vendor_id = SearchData["vendor_id"].ToString();
             string role_name = SearchData["role_name"].ToString();
+
+            
 
 
             long page_count = (long)SearchData["page_count"];
@@ -527,6 +531,9 @@ namespace BLAdmin
             long page_rows = (long)SearchData["page_rows"];
             long page_rowcount = (long)SearchData["page_rowcount"];
             Boolean rights_admin = (Boolean)SearchData["rights_admin"];
+
+            Boolean showall = (Boolean)SearchData["showall"];
+
             string user_pkid = SearchData["user_pkid"].ToString();
             long startrow = 0;
             long endrow = 0;
@@ -534,6 +541,11 @@ namespace BLAdmin
             try
             {
                 sWhere = " where  a.rec_company_code ='" + comp_code + "'  and a.user_code <> 'ADMIN'  ";
+                if ( showall)
+                    sWhere += " and a.user_islocked = 'Y' ";
+                else 
+                    sWhere += " and a.user_islocked = 'N' ";
+
 
                 //if ( rights_admin ==false)
                 //{
@@ -542,21 +554,42 @@ namespace BLAdmin
 
 
                 if (role_name == "SUPER ADMIN")
-                    sWhere += " and role.param_name in('SUPER ADMIN', 'ZONE ADMIN','SALES EXECUTIVE','VENDOR','RECCE USER') ";
+                {
+                    if (mrole == "ALL")
+                        sWhere += " and role.param_name in('SUPER ADMIN', 'ZONE ADMIN','SALES EXECUTIVE','VENDOR','RECCE USER') ";
+                    else
+                        sWhere += " and role.param_name in('" + mrole + "') ";
+                }
 
                 if (role_name == "ZONE ADMIN")
                 {
                     sWhere += " and a.user_region_id = '" + region_id + "'";
-                    sWhere += " and role.param_name in('SALES EXECUTIVE','VENDOR','RECCE USER')";
+                    if (mrole == "SUPER ADMIN" || mrole == "ZONE ADMIN")
+                        mrole = "ALL";
+                    if (mrole == "ALL")
+                        sWhere += " and role.param_name in('SALES EXECUTIVE','VENDOR','RECCE USER')";
+                    else
+                        sWhere += " and role.param_name in('" + mrole + "')";
                 }
                 if (role_name == "SALES EXECUTIVE")
                 {
                     sWhere += " and a.user_region_id = '" + region_id + "'";
-                    sWhere += " and role.param_name in('VENDOR','RECCE USER')";
+                    if (mrole == "SUPER ADMIN" || mrole == "ZONE ADMIN" || mrole == "SALES EXECUTIVE")
+                        mrole = "ALL";
+                    if (mrole == "ALL")
+                        sWhere += " and role.param_name in('VENDOR','RECCE USER')";
+                    else
+                        sWhere += " and role.param_name in('" + mrole + "')";
                 }
                 if (role_name == "VENDOR")
-                    sWhere += " and role.param_name in('RECCE USER') and a.user_vendor_id ='" + vendor_id + "' ";
-
+                { 
+                    if (mrole != "RECCE USER")
+                        mrole = "ALL";
+                    if (mrole == "ALL")
+                        sWhere += " and role.param_name in('RECCE USER') and a.user_vendor_id ='" + vendor_id + "' ";
+                    else
+                        sWhere += " and role.param_name in('" + mrole + "')  and a.user_vendor_id ='" + vendor_id + "' ";
+                }
 
                 if (searchstring != "")
                 {
@@ -608,7 +641,7 @@ namespace BLAdmin
                 DataTable Dt_List = new DataTable();
                 sql = "";
                 sql += " select * from ( ";
-                sql += " select  a.user_pkid, a.user_code, a.user_name , a.user_email, b.comp_name as branch_name,a.user_branch_user,";
+                sql += " select  a.user_pkid, a.user_code, a.user_name , a.user_email, a.user_islocked, b.comp_name as branch_name,a.user_branch_user,";
                 sql += " a.user_local_server, parent.user_name as user_parent_name, ";
                 sql += " sman.param_name as user_sman_name, role.param_name as user_role_name,";
                 sql += " region.param_name as user_region_name, vendor.comp_name as user_vendor_name, ";
@@ -656,6 +689,9 @@ namespace BLAdmin
 
                     mRow.user_local_server = Dr["user_local_server"].ToString();
                     mRow.user_branch_user = Dr["user_branch_user"].ToString() == "Y" ? true : false;
+
+                    mRow.user_islocked = Dr["user_islocked"].ToString() == "Y" ? true : false;
+
                     mList.Add(mRow);
                 }
 
@@ -751,7 +787,7 @@ namespace BLAdmin
             {
                 DataTable Dt_Rec = new DataTable();
 
-                sql = "select  a.user_pkid, a.user_code, a.user_name, a.user_email, a.user_password, a.user_branch_id,a.user_branch_user,a.user_local_server,";
+                sql = "select  a.user_pkid, a.user_code, a.user_name, a.user_email, a.user_islocked, a.user_password, a.user_branch_id,a.user_branch_user,a.user_local_server,";
                 sql += " a.user_parent_id, parent.user_name as user_parent_name,  ";
                 sql += " a.user_sman_id, sman.param_code as user_sman_code,sman.param_name as user_sman_name,a.user_email_pwd, ";
                 sql += " a.user_role_id, role.param_name as user_role_name, ";
@@ -800,6 +836,11 @@ namespace BLAdmin
                     mRow.user_branch_user = false;
                     if (Dr["user_branch_user"].ToString() == "Y")
                         mRow.user_branch_user = true;
+
+                    mRow.user_islocked = false;
+                    if (Dr["user_islocked"].ToString() == "Y")
+                        mRow.user_islocked = true;
+
                     mRow.user_sman_id = Dr["user_sman_id"].ToString();
                     mRow.user_sman_code = Dr["user_sman_code"].ToString();
                     mRow.user_sman_name = Dr["user_sman_name"].ToString();
@@ -877,7 +918,7 @@ namespace BLAdmin
         {
             Dictionary<string, object> RetData = new Dictionary<string, object>();
             string ErrorMessage = "";
-            string default_branch_id = "";
+
             try
             {
                 Con_Oracle = new DBConnection();
@@ -893,31 +934,40 @@ namespace BLAdmin
 
                 if (Record.user_role_name.Trim().Length > 0)
                 {
+                    if (Record.user_role_name.Trim().ToUpper() == "SUPER ADMIN")
+                    {
+                        if (Record.user_region_id.Trim().Length > 0)
+                            Lib.AddError(ref ErrorMessage, "Region Should Not Be Selected");
+                        if (Record.user_vendor_id.Trim().Length > 0)
+                            Lib.AddError(ref ErrorMessage, "Vendor Should Not Be Selected");
+                    }
 
                     if (Record.user_role_name.Trim().ToUpper() == "ZONE ADMIN")
                     {
                         if (Record.user_region_id.Trim().Length <= 0)
                             Lib.AddError(ref ErrorMessage, "Region Need To Be Entered");
+                        if (Record.user_vendor_id.Trim().Length > 0)
+                            Lib.AddError(ref ErrorMessage, "Vendor Should Not Be Selected");
                     }
                     if (Record.user_role_name.Trim().ToUpper() == "SALES EXECUTIVE")
                     {
                         if (Record.user_region_id.Trim().Length <= 0)
                             Lib.AddError(ref ErrorMessage, "Region Need To Be Entered");
+                        if (Record.user_vendor_id.Trim().Length > 0)
+                            Lib.AddError(ref ErrorMessage, "Vendor Should Not Be Selected");
                     }
-
                     if (Record.user_role_name.Trim().ToUpper() == "VENDOR")
                     {
-                        if (Record.user_vendor_id.Trim().Length <= 0)
-                            Lib.AddError(ref ErrorMessage, "Vendor Need To Be Entered");
                         if (Record.user_region_id.Trim().Length <= 0)
                             Lib.AddError(ref ErrorMessage, "Region Need To Be Entered");
+                        if (Record.user_vendor_id.Trim().Length <= 0)
+                            Lib.AddError(ref ErrorMessage, "Vendor Need To Be Entered");
                     }
-
                     if (Record.user_role_name.Trim().ToUpper() == "RECCE USER" ) {
-                        if (Record.user_vendor_id.Trim().Length <= 0)
-                            Lib.AddError(ref ErrorMessage, "Vendor Need To Be Entered");
                         if (Record.user_region_id.Trim().Length <= 0)
                             Lib.AddError(ref ErrorMessage, "Region Need To Be Entered");
+                        if (Record.user_vendor_id.Trim().Length <= 0)
+                            Lib.AddError(ref ErrorMessage, "Vendor Need To Be Entered");
                     }
 
                 }
@@ -961,8 +1011,14 @@ namespace BLAdmin
 
                 Rec.InsertString("user_local_server", Record.user_local_server, "L");
 
+
+                if ( Record.user_islocked)
+                    Rec.InsertString("user_islocked", "Y");
+                else
+                    Rec.InsertString("user_islocked", "N");
+
                 Rec.InsertString("user_issupervisor", "N");
-                Rec.InsertString("user_islocked", "N");
+
                 Rec.InsertString("rec_deleted", "N");
                 Rec.InsertString("rec_updated", "N");
                 Rec.InsertString("rec_printed", "N");

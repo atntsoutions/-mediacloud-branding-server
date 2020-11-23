@@ -50,6 +50,9 @@ namespace DataBase
         public string user_ipaddress { get; set; }
 
         public Boolean user_branch_user { get; set; }
+
+        public Boolean user_islocked { get; set; }
+
         public List<Userd> recorddet { get; set; }
 
     }

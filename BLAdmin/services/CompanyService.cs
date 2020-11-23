@@ -55,10 +55,10 @@ namespace BLAdmin
                         sWhere += " and a.comp_code = '" + comp_code + "'";
                     if (rowtype == "S")
                     {
-                        if (role_name == "ZONE ADMIN" || role_name == "SALES EXECUTIVE" || role_name == "VENDOR" || role_name == "RECCE USER")
-                        {
+                        if (role_name == "ZONE ADMIN" || role_name == "SALES EXECUTIVE")
+                            sWhere += " and a.comp_region_id = '" + region_id + "'";
+                        if (role_name == "VENDOR" || role_name == "RECCE USER")
                             sql2 = " inner join userd c on a.comp_pkid = c.user_branch_id and c.user_id = '" + user_pkid + "'";
-                        }
                     }
 
                     if (rowtype == "V")
@@ -570,7 +570,7 @@ namespace BLAdmin
             iTot = (int)Con_Oracle.ExecuteScalar(sql);
             if (iTot > 0)
             {
-                throw new Exception("Record Exists In Child Table");
+                throw new Exception("Record Exists In Entity Tables");
             }
 
             sql = " select count(*) as tot from  pim_spotm  where spot_store_id = '" + pkid + "'";
@@ -579,6 +579,21 @@ namespace BLAdmin
             {
                 throw new Exception("Record Exists In Spot Table");
             }
+
+            sql = " select count(*) as tot from  userm  where user_vendor_id = '" + pkid + "'";
+            iTot = (int)Con_Oracle.ExecuteScalar(sql);
+            if (iTot > 0)
+            {
+                throw new Exception("Record Exists In User Table");
+            }
+
+            sql = " select count(*) as tot from  userd  where user_branch_id = '" + pkid + "'";
+            iTot = (int)Con_Oracle.ExecuteScalar(sql);
+            if (iTot > 0)
+            {
+                throw new Exception("Record Exists In User/Settings Table");
+            }
+
 
 
             try
@@ -691,7 +706,7 @@ namespace BLAdmin
                 {
                     sWhere += " and a.comp_region_id  = '" + user_region_id +"'";
                 }
-                if (role_name == "ZONE ADMIN" || role_name == "VENDOR")
+                if (role_name == "VENDOR")
                 {
                     sql2 = " inner join userd c on a.comp_pkid = c.user_branch_id and c.user_id = '" + user_pkid + "'";
                 }
