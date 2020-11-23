@@ -499,6 +499,8 @@ namespace DataBase
                     if ( !isAdmin && parentmandatory)
                         sql += " inner join userd b on a.comp_pkid =  b.user_branch_id and b.user_id = '" + ParentId + "'";
                     sql += " where a.rec_company_code ='" + comp_code + "' and comp_type = 'S' ";
+                    if (where != "")
+                        sql += " and " + where;
                     sql += " and ( ";
                     sql += " comp_code like '%" + SearchString.ToUpper() + "%'";
                     sql += " or comp_name like '" + SearchString.ToUpper() + "%'";
