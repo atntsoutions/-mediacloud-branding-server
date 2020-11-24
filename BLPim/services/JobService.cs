@@ -424,5 +424,109 @@ namespace BLPim
         }
 
 
+
+
+
+
+        // Recce User
+
+        public Dictionary<string, object> GetRecord_recce_user(Dictionary<string, object> SearchData)
+        {
+
+            Dictionary<string, object> RetData = new Dictionary<string, object>();
+
+            List<pim_spotd> mList = new List<pim_spotd>();
+
+            pim_spot mRow = new pim_spot();
+
+            string id = SearchData["pkid"].ToString();
+            string comp_code = SearchData["comp_code"].ToString();
+
+
+            try
+            {
+                DataTable Dt_Rec = new DataTable();
+                DataTable Dt_RecDet = new DataTable();
+
+                sql = "select  spot_pkid, ";
+                sql += " spot_recce_id, b.user_name ";
+                sql += " from pim_spotm a  ";
+                sql += " left join userm b on a.spot_recce_id =  b.user_pkid";
+                sql += " where spot_pkid = '" + id + "'";
+
+
+                Con_Oracle = new DBConnection();
+                Dt_Rec = Con_Oracle.ExecuteQuery(sql);
+                Con_Oracle.CloseConnection();
+
+
+                foreach (DataRow Dr in Dt_Rec.Rows)
+                {
+                    mRow = new pim_spot();
+                    mRow.spot_pkid = Dr["spot_pkid"].ToString();
+
+                    mRow.spot_recce_id = Dr["spot_recce_id"].ToString();
+                    mRow.spot_recce_name = Dr["user_name"].ToString();
+
+                    break;
+                }
+
+            }
+            catch (Exception Ex)
+            {
+                if (Con_Oracle != null)
+                    Con_Oracle.CloseConnection();
+                throw Ex;
+            }
+            RetData.Add("record", mRow);
+
+            return RetData;
+        }
+
+
+
+        public Dictionary<string, object> Save_recce_user(pim_spot Record)
+        {
+            Dictionary<string, object> RetData = new Dictionary<string, object>();
+            string ErrorMessage = "";
+            Boolean retvalue = false;
+
+            try
+            {
+                Con_Oracle = new DBConnection();
+
+                if (ErrorMessage != "")
+                    throw new Exception(ErrorMessage);
+
+                DBRecord Rec = new DBRecord();
+                Rec.CreateRow("pim_spotm", "EDIT", "spot_pkid", Record.spot_pkid);
+                Rec.InsertString("spot_recce_id", Record.spot_recce_id);
+
+                sql = Rec.UpdateRow();
+
+                Con_Oracle.BeginTransaction();
+                Con_Oracle.ExecuteNonQuery(sql);
+                Con_Oracle.CommitTransaction();
+                Con_Oracle.CloseConnection();
+                retvalue = true;
+            }
+            catch (Exception Ex)
+            {
+                if (Con_Oracle != null)
+                {
+                    Con_Oracle.RollbackTransaction();
+                    Con_Oracle.CloseConnection();
+                }
+                retvalue = false;
+                throw Ex;
+            }
+            Con_Oracle.CloseConnection();
+            RetData.Add("retvalue", retvalue);
+
+            return RetData;
+        }
+
+
+
     }
 }

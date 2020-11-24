@@ -106,5 +106,42 @@ namespace WebApiServer.Controllers
 
 
 
+        [HttpPost]
+        [Route("GetRecord_recce_user")]
+        public IHttpActionResult GetRecord_recce_user(Dictionary<string, object> SearchData)
+        {
+            try
+            {
+                using (JobService obj = new JobService())
+                    return Ok(obj.GetRecord_recce_user(SearchData));
+            }
+            catch (Exception Ex)
+            {
+                return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.BadRequest, Ex.Message.ToString()));
+            }
+        }
+
+
+
+        [HttpPost]
+        [Route("Save_recce_user")]
+        public IHttpActionResult Save_recce_user(pim_spot Record)
+        {
+            Dictionary<string, object> RetData = new Dictionary<string, object>();
+            try
+            {
+                using (JobService obj = new JobService())
+                    return Ok(obj.Save_recce_user(Record));
+            }
+            catch (Exception Ex)
+            {
+                return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.BadRequest, Ex.Message.ToString()));
+            }
+        }
+
+
+
+
+
     }
 }

@@ -539,6 +539,25 @@ namespace DataBase
                     sql = sql.Replace("{START}", rows_starting_number.ToString());
                     sql = sql.Replace("{END}", rows_ending_number.ToString());
                 }
+
+                else if (Type == "RECCE USER")
+                {
+                    sql = " select * from ( ";
+                    sql += " select user_pkid as id ,user_code as code, user_name as name ";
+                    sql += " ,count(*) over() rowscount,row_number() over(order by user_name) rn ";
+                    sql += " from userm a  ";
+                    sql += " inner join join param role on a.user_role_id = role.param_pkid and role.param_type ='ROLES' and role.param_name='RECCE USER' ";
+                    sql += " where user_code <> 'ADMIN' ";
+                    if ( where != "")
+                        sql += " and " + where;
+                    sql += " and a.rec_company_code = '" + comp_code + "'";
+                    sql += " and user_name like '%" + SearchString.ToUpper() + "%'";
+                    //sql += " order by a.user_name ";
+                    sql += " ) a  where rn between {START} and {END} order by name ";
+                    sql = sql.Replace("{START}", rows_starting_number.ToString());
+                    sql = sql.Replace("{END}", rows_ending_number.ToString());
+                }
+
                 else if (Type == "PIM-GROUP")
                 {
                     sql = " select * from ( ";

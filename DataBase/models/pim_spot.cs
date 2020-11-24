@@ -22,6 +22,9 @@ namespace DataBase
         public string spot_region_id { get; set; }
         public string spot_region_name { get; set; }
 
+        public string spot_recce_id { get; set; }
+        public string spot_recce_name { get; set; }
+
 
         public string spot_executive_name { get; set; }
         public string spot_store_contact_name { get; set; }
