@@ -531,7 +531,7 @@ namespace DataBase
                     sql = " select * from ( ";
                     sql += " select user_pkid as id ,user_code as code, user_name as name ";
                     sql += " ,count(*) over() rowscount,row_number() over(order by user_name) rn ";
-                    sql += " from userm a  where user_code <> 'ADMIN' ";
+                    sql += " from userm a  where a.user_code <> 'ADMIN' and a.user_islocked= 'N'  ";
                     sql += " and a.rec_company_code = '" + comp_code + "'";
                     sql += " and user_name like '%" + SearchString.ToUpper() + "%'";
                     //sql += " order by a.user_name ";
@@ -546,8 +546,8 @@ namespace DataBase
                     sql += " select user_pkid as id ,user_code as code, user_name as name ";
                     sql += " ,count(*) over() rowscount,row_number() over(order by user_name) rn ";
                     sql += " from userm a  ";
-                    sql += " inner join join param role on a.user_role_id = role.param_pkid and role.param_type ='ROLES' and role.param_name='RECCE USER' ";
-                    sql += " where user_code <> 'ADMIN' ";
+                    sql += " inner join param role on a.user_role_id = role.param_pkid and role.param_type ='ROLES' and role.param_name='RECCE USER' ";
+                    sql += " where a.user_code <> 'ADMIN'  and a.user_islocked= 'N' ";
                     if ( where != "")
                         sql += " and " + where;
                     sql += " and a.rec_company_code = '" + comp_code + "'";

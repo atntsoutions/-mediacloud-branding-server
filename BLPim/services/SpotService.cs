@@ -64,7 +64,7 @@ namespace BLPim
                 else if (role_name == "VENDOR")
                     sWhere += " and spot_vendor_id = '" + vendor_id + "'";
                 else if (role_name == "RECCE USER")
-                    sWhere += " and spot_vendor_id = '" + vendor_id + "'";
+                    sWhere += " and spot_vendor_id = '" + vendor_id + "' and spot_recce_id = '" + user_id + "'";
 
 
                 if (type == "NEW")
@@ -111,12 +111,14 @@ namespace BLPim
                 sql += " spot_vendor_id,vendor.comp_name as spot_vendor_name, ";
                 sql += " region.param_name as spot_region_name, ";
                 sql += " spot_executive_name, spot_store_contact_name, spot_store_contact_tel,";
+                sql += " u.user_name,";
                 sql += " am_by, am_date, am_status, am_remarks,";
                 sql += " row_number() over(order by store.comp_name) rn ";
                 sql += " from  pim_spotm a  ";
                 sql += " inner join companym store on a.spot_store_id = store.comp_pkid ";
                 sql += " left  join param region on store.comp_region_id = region.param_pkid ";
                 sql += " inner join companym vendor on a.spot_vendor_id = vendor.comp_pkid ";
+                sql += " left join  userm u on a.spot_recce_id = u.user_pkid ";
                 sql += " left join approvalm on spot_pkid =  am_pkid ";
 
                 if (!user_admin)
@@ -144,6 +146,8 @@ namespace BLPim
                     mRow.spot_store_name = Dr["spot_store_name"].ToString();
                     mRow.spot_vendor_name = Dr["spot_vendor_name"].ToString();
                     mRow.spot_region_name = Dr["spot_region_name"].ToString();
+
+                    mRow.spot_recce_name = Dr["user_name"].ToString();
 
                     mRow.spot_executive_name = Dr["spot_executive_name"].ToString();
                     mRow.spot_store_contact_name = Dr["spot_store_contact_name"].ToString();
@@ -203,10 +207,12 @@ namespace BLPim
                 sql = "select  spot_pkid, spot_slno, spot_date, ";
                 sql += " spot_store_id, store.comp_name as spot_store_name, ";
                 sql += " spot_vendor_id, vendor.comp_name as spot_vendor_name, ";
+                sql += " spot_recce_id, u.user_name as spot_recce_name, ";
                 sql += " spot_store_view, spot_installation_view, spot_executive_name, spot_store_contact_name, spot_store_contact_tel  ";
                 sql += " from pim_spotm a  ";
                 sql += " left join companym store on a.spot_store_id = store.comp_pkid ";
                 sql += " left join companym vendor on a.spot_vendor_id = vendor.comp_pkid ";
+                sql += " left join  userm u on a.spot_recce_id = u.user_pkid ";
                 sql += " where spot_pkid = '" + id + "'";
 
                 
@@ -243,6 +249,9 @@ namespace BLPim
 
                     mRow.spot_vendor_id = Dr["spot_vendor_id"].ToString();
                     mRow.spot_vendor_name = Dr["spot_vendor_name"].ToString();
+
+                    mRow.spot_recce_id = Dr["spot_recce_id"].ToString();
+                    mRow.spot_recce_name = Dr["spot_recce_name"].ToString();
 
                     mRow.spot_executive_name = Dr["spot_executive_name"].ToString();
                     mRow.spot_store_contact_name = Dr["spot_store_contact_name"].ToString();

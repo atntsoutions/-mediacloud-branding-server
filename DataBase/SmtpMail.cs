@@ -74,7 +74,7 @@ namespace DataBase
                     DeliveryReceipt = SearchData["delivery_receipt"].ToString();
 
                 string Email_Display_Name = "";
-                string SMTP_SERVER = "mail.eximusmail.com";
+                string SMTP_SERVER = "";
                 int SMTP_PORT = 587;
                 string EmailID = "";
                 string EmailPwd = "";
