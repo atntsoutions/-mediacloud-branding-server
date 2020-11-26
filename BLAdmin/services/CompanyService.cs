@@ -870,7 +870,7 @@ namespace BLAdmin
 
                 DataTable Dt_List = new DataTable();
                 sql = "";
-                sql += " select ad_pkid, ad_parent_id, ad_by, ad_date, ad_remarks, ad_status from approvald where ad_parent_id ='" + pkid + "' order by ad_date";
+                sql += " select ad_pkid, ad_parent_id, ad_by, ad_date, ad_remarks, ad_status, ad_source from approvald where ad_parent_id ='" + pkid + "' order by ad_date";
 
                 Dt_List = Con_Oracle.ExecuteQuery(sql);
                 Con_Oracle.CloseConnection();
@@ -883,6 +883,7 @@ namespace BLAdmin
                     mRow.ad_by = Dr["ad_by"].ToString();
                     mRow.ad_remarks = Dr["ad_remarks"].ToString();
                     mRow.ad_status = Dr["ad_status"].ToString();
+                    mRow.ad_source = Dr["ad_source"].ToString();
                     mRow.ad_date = Lib.DatetoStringDisplayformat(Dr["ad_date"]);
                     mList.Add(mRow);
                 }
@@ -923,6 +924,8 @@ namespace BLAdmin
                 Rec.InsertString("ad_by", Record.ad_by);
                 Rec.InsertString("ad_remarks", Record.ad_remarks);
                 Rec.InsertString("ad_status", Record.ad_status);
+                Rec.InsertString("ad_source", Record.ad_source);
+                Rec.InsertString("ad_refno", Record.ad_refno);
                 Rec.InsertFunction("ad_date", "getdate()");
                 sql = Rec.UpdateRow();
 
@@ -933,6 +936,8 @@ namespace BLAdmin
                 Rec.InsertString("am_by", Record.ad_by);
                 Rec.InsertString("am_remarks", Record.ad_remarks);
                 Rec.InsertString("am_status", Record.ad_status);
+                Rec.InsertString("am_source", Record.ad_source);
+                Rec.InsertString("am_refno", Record.ad_refno);
                 Rec.InsertFunction("am_date", "getdate()");
 
                 sql3 = Rec.UpdateRow();
@@ -943,6 +948,9 @@ namespace BLAdmin
                 Con_Oracle.ExecuteNonQuery(sql3);
                 Con_Oracle.CommitTransaction();
                 Con_Oracle.CloseConnection();
+
+                SendApprovalMail(Record);
+
             }
             catch (Exception Ex)
             {
@@ -956,6 +964,215 @@ namespace BLAdmin
             Con_Oracle.CloseConnection();
             return RetData;
         }
+
+
+
+        public IDictionary<string, object> ListMailHistory(Dictionary<string, object> SearchData)
+        {
+
+            Dictionary<string, object> RetData = new Dictionary<string, object>();
+
+            Con_Oracle = new DBConnection();
+            List<mailhistory> mList = new List<mailhistory>();
+            mailhistory mRow;
+
+            string pkid = SearchData["pkid"].ToString();
+            try
+            {
+
+                DataTable Dt_List = new DataTable();
+                sql = "";
+                sql += " select  mail_pkid, mail_date, mail_source, mail_source_id, mail_send_by, mail_send_to,mail_send_cc, mail_refno, mail_comments, mail_files from mailhistory  ";
+                sql += " where mail_source_id ='" + pkid + "' order by mail_date";
+
+                Dt_List = Con_Oracle.ExecuteQuery(sql);
+                Con_Oracle.CloseConnection();
+
+                foreach (DataRow Dr in Dt_List.Rows)
+                {
+                    mRow = new mailhistory();
+                    mRow.mail_pkid = Dr["mail_pkid"].ToString();
+                    mRow.mail_date = Lib.DatetoStringDisplayformatWithTime(Dr["mail_date"]);
+                    mRow.mail_source = Dr["mail_source"].ToString();
+                    mRow.mail_source_id = Dr["mail_source_id"].ToString();
+                    mRow.mail_send_by = Dr["mail_send_by"].ToString();
+                    mRow.mail_send_to = Dr["mail_send_to"].ToString();
+                    mRow.mail_send_cc = Dr["mail_send_cc"].ToString();
+                    mRow.mail_refno = Dr["mail_refno"].ToString();
+                    mRow.mail_files = Dr["mail_files"].ToString();
+                    mRow.mail_comments = Dr["mail_comments"].ToString();
+                    mList.Add(mRow);
+                }
+            }
+            catch (Exception Ex)
+            {
+                if (Con_Oracle != null)
+                    Con_Oracle.CloseConnection();
+                throw Ex;
+            }
+
+            RetData.Add("list", mList);
+
+            return RetData;
+        }
+
+
+        public void getjobEmail( approvald  Record, out string emails_to, out string emails_cc)
+        {
+            string comp_code = Record._globalvariables.comp_code;
+            DataTable dt_record;
+            DataTable Dt_Temp;
+            DataRow Dr1;
+
+            emails_to = "";
+            emails_cc = "";
+
+            DBConnection con = new DBConnection();
+
+            try
+            {
+
+                sql = "";
+                sql += " select  spot_pkid,spot_store_id, spot_vendor_id, spot_recce_id, rec_created_by ";
+                sql += " from pim_spotm a  ";
+                sql += " where spot_pkid = '" + Record.ad_parent_id + "'";
+                dt_record = con.ExecuteQuery(sql);
+
+                if (dt_record.Rows.Count > 0)
+                {
+                    Dr1 = dt_record.Rows[0];
+                    sql = "select comp_type,COMP_EMAIL from COMPANYM  where comp_pkid in('" + Dr1["spot_store_id"].ToString() + "','" + Dr1["spot_vendor_id"].ToString() + "')";
+                    Dt_Temp = con.ExecuteQuery(sql);
+                    foreach (DataRow Dr in Dt_Temp.Rows)
+                    {
+                        if (Dr["comp_type"].ToString() == "V")
+                        {
+                            emails_to = Lib.getEmail(emails_cc, Dr["comp_email"].ToString());
+                        }
+                    }
+
+                    sql = "select a.USER_EMAIL as m1, b.USER_EMAIL as m2 from userm  a left join USERM b on a.user_parent_id = b.user_pkid where a.rec_company_code ='" + comp_code + "' and a.USER_CODE in('" + Dr1["rec_created_by"].ToString() + "')";
+                    Dt_Temp = con.ExecuteQuery(sql);
+                    foreach (DataRow Dr in Dt_Temp.Rows)
+                    {
+                        emails_cc = Lib.getEmail(emails_to, Dr["m1"].ToString());
+                        emails_cc = Lib.getEmail(emails_to, Dr["m2"].ToString());
+                    }
+
+                    sql = "select a.USER_EMAIL as m1 FROM  userm  a  where  a.rec_company_code ='" + comp_code + "' and  a.user_pkid = '" + Dr1["spot_recce_id"].ToString() + "'";
+                    Dt_Temp = con.ExecuteQuery(sql);
+                    foreach (DataRow Dr in Dt_Temp.Rows)
+                    {
+                        emails_to = Lib.getEmail(emails_cc, Dr["m1"].ToString());
+                    }
+
+                }
+            }  catch (Exception ex ) {
+                con.CloseConnection();
+                throw ex;
+            }
+            con.CloseConnection();
+        }
+
+        public Boolean SendApprovalMail( approvald Record)
+        {
+            Boolean Bret = false;
+
+            string str = "";
+
+            Dictionary<string, object> SearchData = new Dictionary<string, object>();
+
+            string emails_to = "";
+            string emails_cc = "";
+            string comp_code = Record._globalvariables.comp_code;
+            if( Record.ad_source == "RECCE JOB")
+            {
+                getjobEmail(Record, out emails_to, out emails_cc);
+
+                str = "Dear Sir, \n\n";
+                str += "Recce Work Job#" + Record.ad_refno + " has been " + Record.ad_status + "\n\n\n" ;
+                str += Record._globalvariables.user_name;
+
+                mailhistory Rec = new mailhistory();
+                Rec.mail_source = Record.ad_source;
+                Rec.mail_source_id = Record.ad_parent_id;
+                Rec.mail_send_by = Record.ad_by;
+                Rec.mail_send_to = emails_to;
+                Rec.mail_send_cc = emails_cc;
+                Rec.mail_refno =Record.ad_refno;
+                Rec.mail_comments = "";
+                Rec.mail_files = "";
+                Rec.mail_subject = "Recce Work Job#" + Record.ad_refno + " Status - " + Record.ad_status;
+                Rec.mail_message = str;
+                SaveMailHistory(Rec);
+            }
+            return Bret;
+        }
+
+
+        public Dictionary<string, object> SaveMailHistory(mailhistory Record)
+        {
+            Dictionary<string, object> RetData = new Dictionary<string, object>();
+
+            try
+            {
+                Con_Oracle = new DBConnection();
+
+                string errMsg = "";
+
+                Dictionary<string, object> SearchData = new Dictionary<string, object>();
+
+                //Record.mail_send_to = "joy@cargomar.in";
+                //Record.mail_send_cc = "joycok@gmail.com";
+
+                SearchData.Add("to_ids", Record.mail_send_to);
+                SearchData.Add("cc_ids", Record.mail_send_cc);
+                SearchData.Add("subject", Record.mail_subject);
+                SearchData.Add("message", Record.mail_message);
+                SearchData.Add("filename", Record.mail_files);
+                SearchData.Add("iscommonid", true);
+
+                SmtpMail smail = new SmtpMail();
+                if (!smail.SendEmail(SearchData, out errMsg))
+                {
+                    throw new Exception(errMsg);
+                }
+                {
+                    DBRecord Rec = new DBRecord();
+                    Rec.CreateRow("mailhistory", "ADD", "mail_pkid", System.Guid.NewGuid().ToString().ToUpper());
+                    Rec.InsertFunction("mail_date", "getdate()");
+                    Rec.InsertString("mail_source", Record.mail_source);
+                    Rec.InsertString("mail_source_id", Record.mail_source_id);
+                    Rec.InsertString("mail_send_by", Record.mail_send_by, "P");
+                    Rec.InsertString("mail_send_to", Record.mail_send_to, "P");
+                    Rec.InsertString("mail_send_cc", Record.mail_send_cc, "P");
+                    Rec.InsertString("mail_refno", Record.mail_refno, "P");
+                    Rec.InsertString("mail_comments", Record.mail_comments, "P");
+                    Rec.InsertString("mail_files", Record.mail_files, "P");
+
+                    sql = Rec.UpdateRow();
+
+                    Con_Oracle.BeginTransaction();
+                    Con_Oracle.ExecuteNonQuery(sql);
+                    Con_Oracle.CommitTransaction();
+                    Con_Oracle.CloseConnection();
+                }
+            }
+            catch (Exception Ex)
+            {
+                if (Con_Oracle != null)
+                {
+                    Con_Oracle.RollbackTransaction();
+                    Con_Oracle.CloseConnection();
+                }
+                throw Ex;
+            }
+            Con_Oracle.CloseConnection();
+            return RetData;
+        }
+
+
+
 
 
         public void test1()

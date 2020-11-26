@@ -6,7 +6,7 @@ using DataBase;
 using DataBase.Connections;
 
 namespace BLPim
-{ 
+{
     public class SpotMemo : BaseReport
     {
         public string slno = "";
@@ -14,12 +14,17 @@ namespace BLPim
 
         public string pkid = "";
 
+
+        public string emails_to = "";
+        public string emails_cc = "";
+
         private DataTable dt_record1;
         private DataTable dt_record;
         private DataRow Dr = null;
 
         public string imagefolder = "";
         public string comp_code = "";
+        public string user_code = "";
 
         private string fname = "";
 
@@ -45,13 +50,13 @@ namespace BLPim
         private int iWidth = 595;
         private int iHeight = 500;
 
-        private  string ImagePath = "";
+        private string ImagePath = "";
 
         private string str = "";
 
         public SpotMemo()
         {
-            
+
         }
 
         public void process()
@@ -61,16 +66,19 @@ namespace BLPim
             PrintData();
         }
 
+
         private void ReadData()
         {
             DataBase.Connections.DBConnection con = new DBConnection();
             try
             {
 
+                DataTable Dt_Temp = new DataTable();
+
                 string sql = "";
 
                 sql = "";
-                sql += " select  spot_pkid, spot_slno, spot_date, ";
+                sql += " select  spot_pkid, spot_slno, spot_date, spot_store_id, spot_vendor_id, spot_recce_id, a.rec_created_by, ";
                 sql += " store.comp_name as spot_store_name, store.comp_location as spot_store_location, store.comp_mobile as spot_store_mobile, ";
                 sql += " store.comp_district as spot_store_district, store.comp_state as spot_store_state,";
                 sql += " store.comp_logo_name as spot_store_logo_name, store.comp_image_name as spot_store_image_name, ";
@@ -83,8 +91,34 @@ namespace BLPim
                 sql += " where spot_pkid = '" + pkid + "'";
                 dt_record = con.ExecuteQuery(sql);
 
-                if (dt_record.Rows.Count > 0) 
+                if (dt_record.Rows.Count > 0)
+                {
                     Dr = dt_record.Rows[0];
+                    sql = "select comp_type,COMP_EMAIL from COMPANYM  where comp_pkid in('" + Dr["spot_store_id"].ToString() + "','" + Dr["spot_vendor_id"].ToString() + "')";
+                    Dt_Temp = con.ExecuteQuery(sql);
+                    foreach ( DataRow Dr  in Dt_Temp.Rows)
+                    {
+                        if ( Dr["comp_type"].ToString() == "V")
+                        {
+                            emails_cc = Lib.getEmail(emails_cc, Dr["comp_email"].ToString());
+                        }
+                    }
+
+                    sql = "select a.USER_EMAIL as m1, b.USER_EMAIL as m2 from userm  a left join USERM b on a.user_parent_id = b.user_pkid where a.rec_company_code ='" + comp_code +  "' and a.USER_CODE in('" + Dr["rec_created_by"].ToString() + "')";
+                    Dt_Temp = con.ExecuteQuery(sql);
+                    foreach (DataRow Dr in Dt_Temp.Rows)
+                    {
+                        emails_to = Lib.getEmail(emails_to, Dr["m1"].ToString());
+                        emails_to = Lib.getEmail(emails_to, Dr["m2"].ToString());
+                    }
+
+                    sql = "select a.USER_EMAIL as m1 FROM  userm  a  where  a.rec_company_code ='" + comp_code + "' and  a.user_pkid = '" + Dr["spot_recce_id"].ToString() + "'";
+                    Dt_Temp = con.ExecuteQuery(sql);
+                    foreach (DataRow Dr in Dt_Temp.Rows)
+                    {
+                        emails_cc = Lib.getEmail(emails_cc, Dr["m1"].ToString());
+                    }
+                }
                 else
                     throw new Exception("No Record Found");
 

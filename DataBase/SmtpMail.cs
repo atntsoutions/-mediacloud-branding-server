@@ -31,6 +31,7 @@ namespace DataBase
             string Subject = "";
             string Message = "";
             string User_Pkid = "";
+            Boolean isCommonId = true;
             bool canftp = false;
             try
             {
@@ -61,8 +62,11 @@ namespace DataBase
                 if (SearchData.ContainsKey("canftp"))
                     canftp = SearchData["canftp"].ToString() == "Y" ? true : false;
 
+                if (SearchData.ContainsKey("iscommonid"))
+                    isCommonId = (Boolean) SearchData["iscommonid"];
 
-                if(canftp)
+
+                if (canftp)
                 {
                     Message += "<br>** EDI Files have been uploaded.";
                     Message += "<br>** This is a system generated email.";
@@ -93,45 +97,73 @@ namespace DataBase
 
 
                 DataTable Dt_User = new DataTable();
-                sql = "";
-                sql += " select user_email,user_email_pwd ";
-                sql += " from userm a ";
-                sql += " where user_pkid = '" + User_Pkid + "'";
-
-                DBConnection Con_Oracle = new DBConnection();
-                Dt_User = Con_Oracle.ExecuteQuery(sql);
-                Con_Oracle.CloseConnection();
-
-                foreach (DataRow DrUser in Dt_User.Rows)
+                if (isCommonId)
                 {
-                    EmailID = DrUser["USER_EMAIL"].ToString().ToLower();
-                    EmailPwd = DrUser["USER_EMAIL_PWD"].ToString();
+                    
+                    sql = "";
+                    sql += " select mail_pkid, mail_name, mail_smtp_name, mail_smtp_port, mail_is_ssl_required, mail_is_auth_required, mail_is_spa_required, mail_id, mail_pwd from mailserver ";
 
-                    //Email_Display_Name = DrUser["USER_EMAIL_DISPLAY_NAME"].ToString();
+                    DBConnection Con_Oracle = new DBConnection();
+                    Dt_User = Con_Oracle.ExecuteQuery(sql);
+                    Con_Oracle.CloseConnection();
+                    foreach (DataRow DrUser in Dt_User.Rows)
+                    {
+                        EmailID = DrUser["mail_id"].ToString().ToLower();
+                        EmailPwd = DrUser["mail_pwd"].ToString();
 
-                    //if (DrUser["USR_EMAIL_AUTO_BCC"].ToString() == "Y")
-                    //    Is_Auto_Bcc = true;
-                    //else
-                    //    Is_Auto_Bcc = false;
+                        SMTP_SERVER = DrUser["mail_smtp_name"].ToString();
+                        SMTP_PORT = Lib.Conv2Integer(DrUser["mail_smtp_port"].ToString()) ;
 
-                    //SMTP_SERVER = DrUser["mail_smtp_name"].ToString();
-                    //SMTP_PORT = Lib.Conv2Integer(DrUser["mail_smtp_port"].ToString());
+                        SMTP_SSL = false;
+                        if ( DrUser["mail_is_ssl_required"].ToString() == "Y")
+                            SMTP_SSL = true;
+                        SMTP_Authentication = false;
+                        if (DrUser["mail_is_auth_required"].ToString() == "Y")
+                            SMTP_Authentication = true;
+                    }
+                }
+                else
+                {
+                    sql = "";
+                    sql += " select user_email,user_email_pwd ";
+                    sql += " from userm a ";
+                    sql += " where user_pkid = '" + User_Pkid + "'";
 
-                    //if (DrUser["MAIL_IS_SSL_REQUIRED"].ToString() == "Y")
-                    //    SMTP_SSL = true;
-                    //else
-                    //    SMTP_SSL = false;
+                    DBConnection Con_Oracle = new DBConnection();
+                    Dt_User = Con_Oracle.ExecuteQuery(sql);
+                    Con_Oracle.CloseConnection();
 
-                    //if (DrUser["MAIL_IS_AUTH_REQUIRED"].ToString() == "Y")
-                    //    SMTP_Authentication = true;
-                    //else
-                    //    SMTP_Authentication = false;
+                    foreach (DataRow DrUser in Dt_User.Rows)
+                    {
+                        EmailID = DrUser["USER_EMAIL"].ToString().ToLower();
+                        EmailPwd = DrUser["USER_EMAIL_PWD"].ToString();
 
-                    //if (DrUser["MAIL_IS_SPA_REQUIRED"].ToString() == "Y")
-                    //    SMTP_SPA = true;
-                    //else
-                    //    SMTP_SPA = false;
-                    break;
+                        //Email_Display_Name = DrUser["USER_EMAIL_DISPLAY_NAME"].ToString();
+
+                        //if (DrUser["USR_EMAIL_AUTO_BCC"].ToString() == "Y")
+                        //    Is_Auto_Bcc = true;
+                        //else
+                        //    Is_Auto_Bcc = false;
+
+                        //SMTP_SERVER = DrUser["mail_smtp_name"].ToString();
+                        //SMTP_PORT = Lib.Conv2Integer(DrUser["mail_smtp_port"].ToString());
+
+                        //if (DrUser["MAIL_IS_SSL_REQUIRED"].ToString() == "Y")
+                        //    SMTP_SSL = true;
+                        //else
+                        //    SMTP_SSL = false;
+
+                        //if (DrUser["MAIL_IS_AUTH_REQUIRED"].ToString() == "Y")
+                        //    SMTP_Authentication = true;
+                        //else
+                        //    SMTP_Authentication = false;
+
+                        //if (DrUser["MAIL_IS_SPA_REQUIRED"].ToString() == "Y")
+                        //    SMTP_SPA = true;
+                        //else
+                        //    SMTP_SPA = false;
+                        break;
+                    }
                 }
                 Dt_User.Rows.Clear();
 

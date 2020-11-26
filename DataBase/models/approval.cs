@@ -14,6 +14,8 @@ namespace DataBase
         public string ad_by { get; set; }
         public string ad_remarks { get; set; }
         public string ad_status { get; set; }
+        public string ad_refno { get; set; }
+        public string ad_source { get; set; }
         public string ad_date { get; set; }
     }
 

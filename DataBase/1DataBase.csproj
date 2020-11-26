@@ -79,6 +79,7 @@
     <Compile Include="BaseReport.cs" />
     <Compile Include="Export2Pdf.cs" />
     <Compile Include="Ftp.cs" />
+    <Compile Include="models\mailhistory.cs" />
     <Compile Include="models\campaign.cs" />
     <Compile Include="models\csv.cs" />
     <Compile Include="models\pim_spot.cs" />

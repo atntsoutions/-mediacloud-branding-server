@@ -68,6 +68,20 @@ namespace DataBase
             return str;
         }
 
+
+        public static string DatetoStringDisplayformatWithTime(object mDate)
+        {
+            string str = "";
+            if (mDate == DBNull.Value)
+                str = "";
+            else
+            {
+                str = ((DateTime)mDate).ToString(Lib.FRONT_END_DATE_DISPLAY_FORMAT + " hh:mm:ss");
+            }
+            return str;
+        }
+
+
         public static object ExcelCompatibleDate(object mDate, string format)
         {
             DateTime Dt;
@@ -3240,6 +3254,20 @@ namespace DataBase
             }
             return retval;
         }
+
+
+        public static string getEmail(string e1, string e2)
+        {
+            string str = e1;
+            if (e2.ToString().Length > 0)
+            {
+                if (str.Length > 0)
+                    str += ",";
+                str += e2;
+            }
+            return str;
+        }
+
 
 
 

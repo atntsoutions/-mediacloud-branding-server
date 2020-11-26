@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using DataBase;
 using DataBase.Connections;
 
-
 namespace DataBase
 {
     public class LovService : BL_Base
@@ -390,12 +389,7 @@ namespace DataBase
             }
             return RetData;
         }
-
-
-
-
-
-        
+                                      
 
         // This is used by AutoComplete Search Box
         public IDictionary<string, object> List(Dictionary<string, object> SearchData)

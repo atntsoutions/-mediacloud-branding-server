@@ -127,6 +127,8 @@ namespace WebApiServer.Controllers
                 string pkid = SearchData["pkid"].ToString();
                 string comp_code = SearchData["comp_code"].ToString();
 
+                string user_code = SearchData["user_code"].ToString();
+
                 string ServerReportPath = Lib.GetReportPath(comp_code);
 
                 string ServerImagePath = Lib.GetImagePath(comp_code);
@@ -140,6 +142,7 @@ namespace WebApiServer.Controllers
                 report.pkid = pkid;
                 report.imagefolder = ServerImagePath;
                 report.comp_code = comp_code;
+                report.user_code = user_code;
                 report.Report_Caption = "Spot Details";
                 report.process();
 
@@ -163,7 +166,9 @@ namespace WebApiServer.Controllers
                 RetData.Add("filename", File_Name);
                 RetData.Add("filetype", File_Type);
                 RetData.Add("filedisplayname", File_Display_Name);
-    
+                RetData.Add("email_to", report.emails_to);
+                RetData.Add("email_cc", report.emails_cc);
+
                 return Ok(RetData);
 
             }

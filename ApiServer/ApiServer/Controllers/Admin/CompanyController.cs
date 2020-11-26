@@ -182,6 +182,48 @@ namespace WebApiServer.Controllers
         }
 
 
+        [HttpPost]
+        [Route("ListMailHistory")]
+        public IHttpActionResult ListMailHistory(Dictionary<string, object> SearchData)
+        {
+            Dictionary<string, object> RetData = new Dictionary<string, object>();
+            try
+            {
+                using (CompanyService obj = new CompanyService())
+                    return Ok(obj.ListMailHistory(SearchData));
+            }
+            catch (Exception Ex)
+            {
+                return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.BadRequest, Ex.Message.ToString()));
+            }
+
+        }
+
+
+
+        [HttpPost]
+        [Route("SaveMailHistory")]
+        public IHttpActionResult SaveMailHistory(mailhistory Record)
+        {
+            Dictionary<string, object> RetData = new Dictionary<string, object>();
+            try
+            {
+                using (CompanyService obj = new CompanyService())
+                    return Ok(obj.SaveMailHistory(Record));
+            }
+            catch (Exception Ex)
+            {
+                return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.BadRequest, Ex.Message.ToString()));
+            }
+
+        }
+
+
+
+
+
+
+
 
 
 
