@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /ApiServer/ApiServer/reports/2020-12-08
+/ApiServer/ApiServer/pim/ZEISS/DOCS/8BCCD210-4954-650F-5F3A-10CB6D2A5DD0

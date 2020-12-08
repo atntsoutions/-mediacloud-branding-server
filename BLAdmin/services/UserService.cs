@@ -68,7 +68,8 @@ namespace BLAdmin
             User user = null;
             try
             {
-                string spwd = Lib.Encrypt(password.ToUpper());
+                //string spwd = Lib.Encrypt(password.ToUpper());
+                string spwd = password.ToUpper();
                 string sql = "select user_pkid,user_code, user_name,user_email,user_company_id, user_branch_id,user_local_server, user_branch_user, ";
                 sql += " b.param_pkid as sman_id, b.param_name as sman_name,";
                 sql += " user_vendor_id, user_region_id, user_role_id,user_role_rights_id, role.param_name as user_role_name ";
@@ -817,7 +818,7 @@ namespace BLAdmin
                     mRow.user_parent_id = Dr["user_parent_id"].ToString();
                     mRow.user_parent_name = Dr["user_parent_name"].ToString();
                     mRow.user_email = Dr["user_email"].ToString();
-                    mRow.user_password = Lib.Decrypt(Dr["user_password"].ToString());
+                    mRow.user_password = Dr["user_password"].ToString();
                     mRow.user_branch_id = Dr["user_branch_id"].ToString();
                     mRow.user_email_pwd = Dr["user_email_pwd"].ToString();
 

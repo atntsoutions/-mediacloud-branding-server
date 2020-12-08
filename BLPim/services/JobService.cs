@@ -208,8 +208,20 @@ namespace BLPim
                 sql += " where spot_pkid = '" + id + "'";
 
 
+                sql2 = "select  spotd_pkid, spotd_parent_id, spotd_name ,spotd_slno,spotd_uom, spotd_wd, spotd_ht, ";
+                sql2 += " spotd_artwork_id, artwork.param_name as spotd_artwork_name, artwork.param_slno as spotd_artwork_slno,artwork.param_file_name as spotd_artwork_file_name,";
+                sql2 += " spotd_product_id, product.param_name as spotd_product_name, ";
+                sql2 += " spotd_close_view, spotd_long_view, spotd_final_view ";
+                sql2 += " from pim_spotd a  ";
+                sql2 += " left join param artwork on a.spotd_artwork_id = artwork.param_pkid ";
+                sql2 += " left join param product on a.spotd_product_id = product.param_pkid ";
+                sql2 += " where spotd_parent_id = '" + id + "'";
+                sql2 += " order by spotd_slno";
+
+
                 Con_Oracle = new DBConnection();
                 Dt_Rec = Con_Oracle.ExecuteQuery(sql);
+                Dt_RecDet = Con_Oracle.ExecuteQuery(sql2);
                 Con_Oracle.CloseConnection();
 
 
@@ -239,8 +251,51 @@ namespace BLPim
                     break;
                 }
 
+                foreach (DataRow Dr in Dt_RecDet.Rows)
+                {
+                    mRowd = new pim_spotd();
+                    mRowd.spotd_pkid = Dr["spotd_pkid"].ToString();
+                    mRowd.spotd_parent_id = Dr["spotd_parent_id"].ToString();
 
-                
+                    mRowd.spotd_slno = Lib.Conv2Integer(Dr["spotd_slno"].ToString());
+                    mRowd.spotd_name = Dr["spotd_name"].ToString();
+                    mRowd.spotd_uom = Dr["spotd_uom"].ToString();
+                    mRowd.spotd_wd = Lib.Convert2Decimal(Dr["spotd_wd"].ToString());
+                    mRowd.spotd_ht = Lib.Convert2Decimal(Dr["spotd_ht"].ToString());
+
+                    mRowd.spotd_artwork_id = Dr["spotd_artwork_id"].ToString();
+                    mRowd.spotd_artwork_name = Dr["spotd_artwork_name"].ToString();
+                    mRowd.spotd_artwork_file_name = Dr["spotd_artwork_file_name"].ToString();
+
+                    mRowd.spotd_product_id = Dr["spotd_product_id"].ToString();
+                    mRowd.spotd_product_name = Dr["spotd_product_name"].ToString();
+
+                    mRowd.spotd_close_view = Dr["spotd_close_view"].ToString();
+                    mRowd.spotd_long_view = Dr["spotd_long_view"].ToString();
+                    mRowd.spotd_final_view = Dr["spotd_final_view"].ToString();
+
+                    mRowd.spotd_close_view_file_uploaded = false;
+                    if (Dr["spotd_close_view"].ToString().Length > 0)
+                        mRowd.spotd_close_view_file_uploaded = true;
+
+                    mRowd.spotd_long_view_file_uploaded = false;
+                    if (Dr["spotd_long_view"].ToString().Length > 0)
+                        mRowd.spotd_long_view_file_uploaded = true;
+
+                    mRowd.spotd_final_view_file_uploaded = false;
+                    if (Dr["spotd_final_view"].ToString().Length > 0)
+                        mRowd.spotd_final_view_file_uploaded = true;
+
+                    mRowd.rec_mode = "EDIT";
+
+                    mList.Add(mRowd);
+
+                }
+
+
+
+
+
 
             }
             catch (Exception Ex)
@@ -250,7 +305,7 @@ namespace BLPim
                 throw Ex;
             }
             RetData.Add("record", mRow);
-
+            RetData.Add("recorddet", mList);
             return RetData;
         }
 
