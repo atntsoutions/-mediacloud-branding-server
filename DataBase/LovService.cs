@@ -490,8 +490,8 @@ namespace DataBase
                 else if (Type == "STORE")
                 {
                     sql = " select * from ( ";
-                    sql += " select  comp_pkid as id , comp_code as code, comp_name as name ";
-                    sql += " ,count(*) over() rowscount,row_number() over(order by comp_name) rn ";
+                    sql += " select  comp_pkid as id , comp_code as code, comp_name as name, comp_tel, comp_ptc, ";
+                    sql += " count(*) over() rowscount,row_number() over(order by comp_name) rn ";
                     sql += " from companym a";
                     if ( !isAdmin && parentmandatory)
                         sql += " inner join userd b on a.comp_pkid =  b.user_branch_id and b.user_id = '" + ParentId + "'";
@@ -741,6 +741,11 @@ namespace DataBase
                     if (Type == "EMPLOYEE")
                     {
                         mRow.col1 = Dr["col1"].ToString();//emp status
+                    }
+                    if (Type == "STORE")
+                    {
+                        mRow.col1 = Dr["comp_tel"].ToString();
+                        mRow.col2 = Dr["comp_ptc"].ToString();
                     }
                     mList.Add(mRow);
                 }

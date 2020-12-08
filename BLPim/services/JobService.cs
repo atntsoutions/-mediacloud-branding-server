@@ -201,7 +201,7 @@ namespace BLPim
                 sql = "select  spot_pkid, spot_slno, spot_date, ";
                 sql += " spot_store_id, store.comp_name as spot_store_name, ";
                 sql += " spot_vendor_id, vendor.comp_name as spot_vendor_name, ";
-                sql += " spot_job_remarks ";
+                sql += " spot_job_remarks, spot_store_contact_name, spot_store_contact_tel ";
                 sql += " from pim_spotm a  ";
                 sql += " left join companym store on a.spot_store_id = store.comp_pkid ";
                 sql += " left join companym vendor on a.spot_vendor_id = vendor.comp_pkid ";
@@ -232,6 +232,10 @@ namespace BLPim
                     mRow.spot_vendor_name = Dr["spot_vendor_name"].ToString();
 
                     mRow.spot_job_remarks = Dr["spot_job_remarks"].ToString();
+
+                    mRow.spot_store_contact_name = Dr["spot_store_contact_name"].ToString();
+                    mRow.spot_store_contact_tel = Dr["spot_store_contact_tel"].ToString();
+
                     break;
                 }
 
@@ -328,10 +332,16 @@ namespace BLPim
                 Rec.InsertString("spot_vendor_id", Record.spot_vendor_id);
 
                 Rec.InsertString("spot_job_remarks", Record.spot_job_remarks);
+                
 
                 if (Record.rec_mode == "ADD")
                 {
                     Rec.InsertNumeric("spot_slno", iSlno.ToString());
+                    Rec.InsertString("spot_executive_name", Record._globalvariables.user_name);
+
+                    Rec.InsertString("spot_store_contact_name", Record.spot_store_contact_name);
+                    Rec.InsertString("spot_store_contact_tel", Record.spot_store_contact_tel);
+
                     Rec.InsertString("rec_company_code", Record._globalvariables.comp_code);
                     Rec.InsertString("rec_created_by", Record._globalvariables.user_code);
                     if (Con_Oracle.DB == "ORACLE")

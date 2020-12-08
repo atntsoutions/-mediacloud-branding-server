@@ -415,7 +415,7 @@ namespace BLPim
                 //Rec.InsertString("spot_store_id", Record.spot_store_id);
                 //Rec.InsertString("spot_vendor_id", Record.spot_vendor_id);
 
-                Rec.InsertString("spot_executive_name", Record.spot_executive_name);
+                //Rec.InsertString("spot_executive_name", Record.spot_executive_name);
                 Rec.InsertString("spot_store_contact_name", Record.spot_store_contact_name);
                 Rec.InsertString("spot_store_contact_tel", Record.spot_store_contact_tel);
 

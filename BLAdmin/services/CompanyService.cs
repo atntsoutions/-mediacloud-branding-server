@@ -1122,8 +1122,8 @@ namespace BLAdmin
 
                 Dictionary<string, object> SearchData = new Dictionary<string, object>();
 
-                //Record.mail_send_to = "joy@cargomar.in";
-                //Record.mail_send_cc = "joycok@gmail.com";
+                Record.mail_send_to = "joy@cargomar.in";
+                Record.mail_send_cc = "joycok@gmail.com";
 
                 SearchData.Add("to_ids", Record.mail_send_to);
                 SearchData.Add("cc_ids", Record.mail_send_cc);

@@ -95,6 +95,7 @@ namespace BLPim
                 {
                     Dr = dt_record.Rows[0];
                     sql = "select comp_type,COMP_EMAIL from COMPANYM  where comp_pkid in('" + Dr["spot_store_id"].ToString() + "','" + Dr["spot_vendor_id"].ToString() + "')";
+                    //sql = "select comp_type,COMP_EMAIL from COMPANYM  where comp_pkid in('" + Dr["spot_vendor_id"].ToString() + "')";
                     Dt_Temp = con.ExecuteQuery(sql);
                     foreach ( DataRow Dr  in Dt_Temp.Rows)
                     {
@@ -112,12 +113,14 @@ namespace BLPim
                         emails_to = Lib.getEmail(emails_to, Dr["m2"].ToString());
                     }
 
+                    /*
                     sql = "select a.USER_EMAIL as m1 FROM  userm  a  where  a.rec_company_code ='" + comp_code + "' and  a.user_pkid = '" + Dr["spot_recce_id"].ToString() + "'";
                     Dt_Temp = con.ExecuteQuery(sql);
                     foreach (DataRow Dr in Dt_Temp.Rows)
                     {
                         emails_cc = Lib.getEmail(emails_cc, Dr["m1"].ToString());
                     }
+                    */
                 }
                 else
                     throw new Exception("No Record Found");
