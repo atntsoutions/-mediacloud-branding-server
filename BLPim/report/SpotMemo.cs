@@ -26,7 +26,9 @@ namespace BLPim
         public string comp_code = "";
         public string user_code = "";
 
-        private string fname = "";
+        
+
+        private string status = "";
 
 
         Single x1 = 0;
@@ -129,7 +131,7 @@ namespace BLPim
                 sql += " select  spotd_pkid, spotd_name ,spotd_slno, spotd_uom, spotd_wd, spotd_ht, ";
                 sql += " spotd_artwork_id, artwork.param_name as spotd_artwork_name, artwork.param_slno as spotd_artwork_slno,artwork.param_file_name as spotd_artwork_file_name,";
                 sql += " spotd_product_id, product.param_name as spotd_product_name, ";
-                sql += " spotd_close_view, spotd_long_view, spotd_final_view ";
+                sql += " spotd_close_view, spotd_long_view, spotd_final_view, spotd_status ";
                 sql += " from pim_spotd  a ";
                 sql += " left join param artwork on a.spotd_artwork_id = artwork.param_pkid ";
                 sql += " left join param product on a.spotd_product_id = product.param_pkid ";
@@ -339,9 +341,14 @@ namespace BLPim
             AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "MEDIA", "Arial", ifontSize , "A", "L");
             AddXYLabel(HCOL2, Row, ROW_HT, HCOL3 - HCOL2, Dr1["spotd_product_name"].ToString(), "Arial", 12, "A", "");
 
+
+
             R1++; Row += ROW_HT;
+
+            status = Dr1["spotd_status"].ToString();
+
             AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "REMARKS", "Arial", ifontSize, "A", "L");
-            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, "", "Arial", 12, "A", "");
+            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, status, "Arial", 12, "A", "");
 
 
             R1++; Row += ROW_HT  ;

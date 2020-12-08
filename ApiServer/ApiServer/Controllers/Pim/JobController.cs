@@ -54,6 +54,22 @@ namespace WebApiServer.Controllers
 
 
         [HttpPost]
+        [Route("SaveStatus")]
+        public IHttpActionResult SaveStatus(pim_spotd Record)
+        {
+            try
+            {
+                using (JobService obj = new JobService())
+                    return Ok(obj.SaveStatus(Record));
+            }
+            catch (Exception Ex)
+            {
+                return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.BadRequest, Ex.Message.ToString()));
+            }
+        }
+
+
+        [HttpPost]
         [Route("Save")]
         public IHttpActionResult Save()
         {
@@ -87,6 +103,8 @@ namespace WebApiServer.Controllers
                 return ResponseMessage(Request.CreateErrorResponse(HttpStatusCode.BadRequest, Ex.Message.ToString()));
             }
         }
+
+
 
 
 

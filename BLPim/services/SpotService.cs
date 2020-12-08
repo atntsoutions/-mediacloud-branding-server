@@ -207,12 +207,13 @@ namespace BLPim
                 sql = "select  spot_pkid, spot_slno, spot_date, ";
                 sql += " spot_store_id, store.comp_name as spot_store_name, ";
                 sql += " spot_vendor_id, vendor.comp_name as spot_vendor_name, ";
-                sql += " spot_recce_id, u.user_name as spot_recce_name, ";
+                sql += " spot_recce_id, u.user_name as spot_recce_name,  am_status, ";
                 sql += " spot_store_view, spot_installation_view, spot_executive_name, spot_store_contact_name, spot_store_contact_tel  ";
                 sql += " from pim_spotm a  ";
                 sql += " left join companym store on a.spot_store_id = store.comp_pkid ";
                 sql += " left join companym vendor on a.spot_vendor_id = vendor.comp_pkid ";
                 sql += " left join  userm u on a.spot_recce_id = u.user_pkid ";
+                sql += " left join approvalm on spot_pkid =  am_pkid ";
                 sql += " where spot_pkid = '" + id + "'";
 
                 
@@ -259,6 +260,8 @@ namespace BLPim
 
 
                     mRow.spot_store_view = Dr["spot_store_view"].ToString();
+
+                    mRow.approved_status = Dr["am_status"].ToString();
 
                     mRow.spot_installation_view = Dr["spot_installation_view"].ToString();
                     mRow.spot_server_folder = Lib.getUploadedPath(comp_code,mRow.spot_pkid);

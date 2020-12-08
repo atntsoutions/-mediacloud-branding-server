@@ -38,8 +38,11 @@ namespace DataBase
 
         public bool spot_store_view_file_uploaded { get; set; }
 
+        
+
         public string spot_installation_view { get; set; }
         public bool spot_installation_view_file_uploaded { get; set; }
+
 
     }
 
@@ -74,6 +77,8 @@ namespace DataBase
 
         public string spotd_final_view { get; set; }
         public bool spotd_final_view_file_uploaded { get; set; }
+
+        public string spotd_status { get; set; }
 
 
     }

@@ -201,8 +201,9 @@ namespace BLPim
                 sql = "select  spot_pkid, spot_slno, spot_date, ";
                 sql += " spot_store_id, store.comp_name as spot_store_name, ";
                 sql += " spot_vendor_id, vendor.comp_name as spot_vendor_name, ";
-                sql += " spot_job_remarks, spot_store_contact_name, spot_store_contact_tel ";
+                sql += " spot_job_remarks, spot_store_contact_name, spot_store_contact_tel,am_status ";
                 sql += " from pim_spotm a  ";
+                sql += " left join approvalm on spot_pkid =  am_pkid";
                 sql += " left join companym store on a.spot_store_id = store.comp_pkid ";
                 sql += " left join companym vendor on a.spot_vendor_id = vendor.comp_pkid ";
                 sql += " where spot_pkid = '" + id + "'";
@@ -211,7 +212,7 @@ namespace BLPim
                 sql2 = "select  spotd_pkid, spotd_parent_id, spotd_name ,spotd_slno,spotd_uom, spotd_wd, spotd_ht, ";
                 sql2 += " spotd_artwork_id, artwork.param_name as spotd_artwork_name, artwork.param_slno as spotd_artwork_slno,artwork.param_file_name as spotd_artwork_file_name,";
                 sql2 += " spotd_product_id, product.param_name as spotd_product_name, ";
-                sql2 += " spotd_close_view, spotd_long_view, spotd_final_view ";
+                sql2 += " spotd_close_view, spotd_long_view, spotd_final_view, spotd_status ";
                 sql2 += " from pim_spotd a  ";
                 sql2 += " left join param artwork on a.spotd_artwork_id = artwork.param_pkid ";
                 sql2 += " left join param product on a.spotd_product_id = product.param_pkid ";
@@ -245,8 +246,11 @@ namespace BLPim
 
                     mRow.spot_job_remarks = Dr["spot_job_remarks"].ToString();
 
+                    mRow.approved_status = Dr["am_status"].ToString();
+
                     mRow.spot_store_contact_name = Dr["spot_store_contact_name"].ToString();
                     mRow.spot_store_contact_tel = Dr["spot_store_contact_tel"].ToString();
+
 
                     break;
                 }
@@ -273,7 +277,7 @@ namespace BLPim
                     mRowd.spotd_close_view = Dr["spotd_close_view"].ToString();
                     mRowd.spotd_long_view = Dr["spotd_long_view"].ToString();
                     mRowd.spotd_final_view = Dr["spotd_final_view"].ToString();
-
+ 
                     mRowd.spotd_close_view_file_uploaded = false;
                     if (Dr["spotd_close_view"].ToString().Length > 0)
                         mRowd.spotd_close_view_file_uploaded = true;
@@ -285,6 +289,8 @@ namespace BLPim
                     mRowd.spotd_final_view_file_uploaded = false;
                     if (Dr["spotd_final_view"].ToString().Length > 0)
                         mRowd.spotd_final_view_file_uploaded = true;
+
+                    mRowd.spotd_status = Dr["spotd_status"].ToString();
 
                     mRowd.rec_mode = "EDIT";
 
@@ -435,6 +441,40 @@ namespace BLPim
             Con_Oracle.CloseConnection();
             RetData.Add("retvalue",retvalue);
             RetData.Add("slno", iSlno);
+
+            return RetData;
+        }
+
+
+        public Dictionary<string, object> SaveStatus(pim_spotd Record)
+        {
+            Dictionary<string, object> RetData = new Dictionary<string, object>();
+            Boolean retvalue = false;
+            try
+            {
+                Con_Oracle = new DBConnection();
+                DBRecord Rec = new DBRecord();
+                Rec.CreateRow("pim_spotd", "EDIT", "spotd_pkid", Record.spotd_pkid);
+                Rec.InsertString("spotd_status", Record.spotd_status);
+                sql = Rec.UpdateRow();
+                Con_Oracle.BeginTransaction();
+                Con_Oracle.ExecuteNonQuery(sql);
+                Con_Oracle.CommitTransaction();
+                Con_Oracle.CloseConnection();
+                retvalue = true;
+            }
+            catch (Exception Ex)
+            {
+                if (Con_Oracle != null)
+                {
+                    Con_Oracle.RollbackTransaction();
+                    Con_Oracle.CloseConnection();
+                }
+                retvalue = false;
+                throw Ex;
+            }
+            Con_Oracle.CloseConnection();
+            RetData.Add("retvalue", retvalue);
 
             return RetData;
         }
