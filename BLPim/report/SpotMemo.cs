@@ -80,7 +80,7 @@ namespace BLPim
                 sql = "";
                 sql += " select  spot_pkid, spot_slno, spot_date, spot_store_id, spot_vendor_id, spot_recce_id, a.rec_created_by, ";
                 sql += " store.comp_name as spot_store_name, store.comp_location as spot_store_location, store.comp_mobile as spot_store_mobile, ";
-                sql += " store.comp_district as spot_store_district, store.comp_state as spot_store_state,";
+                sql += " store.comp_district as spot_store_district, store.comp_state as spot_store_state,spot_store_view,";
                 sql += " store.comp_logo_name as spot_store_logo_name, store.comp_image_name as spot_store_image_name, ";
                 sql += " comp.comp_pkid, comp.comp_name as spot_comp_name, comp.comp_logo_name as spot_comp_logo_name, comp.comp_image_name as spot_comp_image_name, ";
                 sql += " spot_executive_name, spot_store_contact_name, spot_store_contact_tel ";
@@ -247,17 +247,23 @@ namespace BLPim
             AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, Dr["spot_store_contact_tel"].ToString(), "Arial", 12, "A", "C");
 
 
-            R1++; Row += ROW_HT;
+            R1++; Row += ROW_HT + 3;
+
+            
+
+            ImagePath = Lib.getUploadedPath(comp_code, Dr["spot_pkid"].ToString(), "storeview\\" + Dr["spot_store_view"].ToString(), false);
+            LoadImage("", HCOL1, Row , ImagePath, 150, HCOL3 - HCOL1);
+
 
             ImagePath = Lib.getUploadedPath(comp_code, "repo", "recce_pdf_footer1\\mediacloudlogo.png", false);
             SetFillRectangle(0, HCOL_MAX_HEIGHT - 35, 30, HCOL_MAX_WIDTH, 1, "GRAY", "GRAY");
             LoadImage("", HCOL_MAX_WIDTH - 130, HCOL_MAX_HEIGHT - 36, ImagePath, 32, 100);
             //polygon
             x1 = 0;
-            y1 = HCOL_MAX_HEIGHT - 150;
+            y1 = HCOL_MAX_HEIGHT - 100;
             x2 = 0;
             y2 = HCOL_MAX_HEIGHT;
-            x3 = 150;
+            x3 = 100;
             y3 = HCOL_MAX_HEIGHT;
             DrawPolygon("ORANGE", 3, x1.ToString() + "," + y1.ToString() + "," + x2.ToString() + "," + y2.ToString() + "," + x3.ToString() + "," + y3.ToString());
 
@@ -282,60 +288,87 @@ namespace BLPim
             R1++; Row += ROW_HT;
             //R1++; Row += ROW_HT;
 
-            AddXYLabel( HCOL1, Row, ROW_HT, HCOL3 - HCOL1, "INSIDE LEFT SIDE TOP", "Arial", ifontSize, "", "L");
+            R1++; Row += 6;
 
-            AddXYLabel( HCOL4, Row, ROW_HT, HCOL_MAX_WIDTH - HCOL4, "CLOSE VIEW", "Arial", ifontSize, "", "L");
-
-            R1++; Row += ROW_HT;
-
+            //left top
             ImagePath = Lib.getUploadedPath(comp_code, Dr1["spotd_pkid"].ToString(), "closeview\\" + Dr1["spotd_close_view"].ToString(), false);
-            LoadImage("", HCOL4 , Row, ImagePath, 230, HCOL_MAX_WIDTH - HCOL4);
+            LoadImage("", HCOL1, Row, ImagePath, 244, HCOL3 - HCOL1);
 
-            Row += 230;
-
-            AddXYLabel( HCOL4, Row, ROW_HT, HCOL_MAX_WIDTH - HCOL4, "LONG VIEW", "Arial", ifontSize, "", "L");
-            R1++; Row += ROW_HT;
+            // right top
             ImagePath = Lib.getUploadedPath(comp_code, Dr1["spotd_pkid"].ToString(), "longview\\" + Dr1["spotd_long_view"].ToString(), false);
-            LoadImage("", HCOL4 , Row, ImagePath, 245, 120 );
+            LoadImage("", HCOL4 , Row, ImagePath, 244, HCOL_MAX_WIDTH - HCOL4 - 3) ;
 
-            
+            // bottom right
+            Row += 244;
+            R1++; Row += 4;
+            ImagePath = Lib.getUploadedPath(comp_code, Dr1["spotd_pkid"].ToString(), "finalview\\" + Dr1["spotd_final_view"].ToString(), false);
+            LoadImage("", HCOL4, Row, ImagePath, 255, HCOL_MAX_WIDTH - HCOL4 - 3);
+            //LoadImage("", HCOL4 , Row, ImagePath, 245, 120 );
+
+
             ifontSize = 10;
 
-            R1++; Row += ROW_HT;
-            R1++; Row += ROW_HT;
-            R1++; Row += ROW_HT;
-            R1++; Row += ROW_HT;
-            R1++; Row += ROW_HT;
+            //R1++; Row += ROW_HT;
+            //R1++; Row += ROW_HT;
+            //R1++; Row += ROW_HT;
+            //R1++; Row += ROW_HT;
+            //R1++; Row += ROW_HT;
 
             AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "RECCE PHOTO REF NO", "Arial", ifontSize, "A", "L");
-            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, Dr1["spotd_slno"].ToString(), "Arial", 12, "A", "L");
+            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, Dr1["spotd_slno"].ToString(), "Arial", 12, "A", "");
+
+            R1++; Row += ROW_HT;
+            AddXYLabel(HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "SPOT NAME", "Arial", ifontSize, "A", "L");
+            AddXYLabel(HCOL2, Row, ROW_HT, HCOL3 - HCOL2, Dr1["spotd_name"].ToString(), "Arial", 12, "A", "");
 
             R1++; Row += ROW_HT;
             str = "(W) " + Dr1["spotd_wd"].ToString() + " (H) " + Dr1["spotd_ht"].ToString();
             AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "SIZE IN " + Dr1["spotd_uom"].ToString(), "Arial", ifontSize, "A", "L");
-            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, str, "Arial", 12, "A", "L");
+            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, str, "Arial", 12, "A", "");
 
+            /*
             R1++; Row += ROW_HT;
             AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "ART WORK", "Arial", ifontSize, "A", "L");
             AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, Dr1["spotd_artwork_name"].ToString(), "Arial", 12, "A", "L");
-
             R1++; Row += ROW_HT;
             AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "PRODUCT", "Arial", ifontSize , "A", "L");
             AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, Dr1["spotd_product_name"].ToString(), "Arial", 12, "A", "L");
+            */
 
             R1++; Row += ROW_HT;
-            AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "CREATIVE NEEDED", "Arial", ifontSize , "A", "L");
-            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, "", "Arial", 12, "A", "L");
+            AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "MEDIA", "Arial", ifontSize , "A", "L");
+            AddXYLabel(HCOL2, Row, ROW_HT, HCOL3 - HCOL2, Dr1["spotd_product_name"].ToString(), "Arial", 12, "A", "");
 
             R1++; Row += ROW_HT;
             AddXYLabel( HCOL1, Row, ROW_HT, HCOL2 - HCOL1, "REMARKS", "Arial", ifontSize, "A", "L");
-            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, "", "Arial", 12, "A", "L");
+            AddXYLabel( HCOL2, Row, ROW_HT, HCOL3 - HCOL2, "", "Arial", 12, "A", "");
 
 
-            R1++; Row += ROW_HT;
+            R1++; Row += ROW_HT  ;
+
+            AddXYLabel(HCOL1+1, Row, ROW_HT, HCOL3 - HCOL1, "CREATIVE", "Arial", ifontSize, "A", "CB");
+
+            R1++; Row += ROW_HT + 2;
+
+            SetFillRectangle(HCOL1 +1, Row, 100, HCOL3 - HCOL1, 1, "BLACK", "WHITE");
+            ImagePath = Lib.getUploadedPath(comp_code, Dr1["spotd_artwork_id"].ToString(), "default\\" + Dr1["spotd_artwork_file_name"].ToString(), false);
+            LoadImage("", HCOL1+1, Row, ImagePath, 145, HCOL3 - HCOL1);
 
 
 
+            ImagePath = Lib.getUploadedPath(comp_code, "repo", "recce_pdf_footer1\\mediacloudlogo.png", false);
+            SetFillRectangle(0, HCOL_MAX_HEIGHT - 35, 30, HCOL_MAX_WIDTH, 1, "GRAY", "GRAY");
+            LoadImage("", HCOL_MAX_WIDTH - 130, HCOL_MAX_HEIGHT - 36, ImagePath, 32, 100);
+            //polygon
+            x1 = 0;
+            y1 = HCOL_MAX_HEIGHT - 100;
+            x2 = 0;
+            y2 = HCOL_MAX_HEIGHT;
+            x3 = 100;
+            y3 = HCOL_MAX_HEIGHT;
+            DrawPolygon("ORANGE", 3, x1.ToString() + "," + y1.ToString() + "," + x2.ToString() + "," + y2.ToString() + "," + x3.ToString() + "," + y3.ToString());
+
+            /*
             ImagePath = Lib.getUploadedPath(comp_code, "repo", "recce_pdf_footer1\\mediacloudlogo.png", false);
             SetFillRectangle(0, HCOL_MAX_HEIGHT - 35, 30, HCOL_MAX_WIDTH, 1, "GRAY", "GRAY");
             LoadImage("", 30, HCOL_MAX_HEIGHT - 36, ImagePath, 32, 100);
@@ -347,7 +380,7 @@ namespace BLPim
             x3 = HCOL_MAX_WIDTH - 150;
             y3 = HCOL_MAX_HEIGHT;
             DrawPolygon("ORANGE", 3, x1.ToString() + "," + y1.ToString() + "," + x2.ToString() + "," + y2.ToString() + "," + x3.ToString() + "," + y3.ToString());
-
+            */
 
 
         }

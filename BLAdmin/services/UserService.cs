@@ -990,7 +990,9 @@ namespace BLAdmin
 
                 Rec.InsertString("user_email", Record.user_email, "L");
 
-                Rec.InsertString("user_password", Lib.Encrypt(Record.user_password), "P");
+                //Rec.InsertString("user_password", Lib.Encrypt(Record.user_password), "P");
+
+                Rec.InsertString("user_password", Record.user_password, "P");
 
                 Rec.InsertString("user_branch_user", (Record.user_branch_user) ? "Y" : "N");
 
