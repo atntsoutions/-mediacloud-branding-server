@@ -185,11 +185,11 @@ namespace DataBase
             addList("{HLINE1}", Left.ToString(), Top.ToString(), Width.ToString(), ColorCode);
         }
 
-        public void LoadImage(object mCanvas, float Left, float Top, string ImageName, float Height = 0, float Width = 0, int PdfY = 100)
+        public void LoadImage(object mCanvas, float Left, float Top, string ImageName, float Height = 0, float Width = 0, int stretch=0, int PdfY = 100)
         {
             try
             {
-                addList("{IMAGE1}", ImageName, Left.ToString(), Top.ToString(), Height.ToString(), Width.ToString(), PdfY.ToString());
+                addList("{IMAGE1}", ImageName, Left.ToString(), Top.ToString(), Height.ToString(), Width.ToString(),stretch.ToString(),  PdfY.ToString());
             }
             catch (Exception)
             {

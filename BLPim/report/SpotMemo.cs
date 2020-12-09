@@ -289,7 +289,7 @@ namespace BLPim
             
 
             ImagePath = Lib.getUploadedPath(comp_code, Dr["spot_pkid"].ToString(), "storeview\\" + Dr["spot_store_view"].ToString(), false);
-            LoadImage("", HCOL1, Row , ImagePath, 150, HCOL3 - HCOL1);
+            LoadImage("", HCOL1 , Row  , ImagePath, 150, HCOL3 - HCOL1);
 
 
             ImagePath = Lib.getUploadedPath(comp_code, "repo", "recce_pdf_footer1\\mediacloudlogo.png", false);
@@ -328,16 +328,21 @@ namespace BLPim
             R1++; Row += 6;
 
             //left top
+
+            SetFillRectangle(HCOL1, Row-1, 246, HCOL3 - HCOL1 +1, 1, "BLACK", "WHITE");
+
             ImagePath = Lib.getUploadedPath(comp_code, Dr1["spotd_pkid"].ToString(), "closeview\\" + Dr1["spotd_close_view"].ToString(), false);
-            LoadImage("", HCOL1, Row, ImagePath, 244, HCOL3 - HCOL1);
+            LoadImage("", HCOL1, Row, ImagePath, 244,  HCOL3 - HCOL1);
 
             // right top
+            SetFillRectangle(HCOL4, Row - 1, 246, HCOL3 - HCOL1 -20, 1, "BLACK", "WHITE");
             ImagePath = Lib.getUploadedPath(comp_code, Dr1["spotd_pkid"].ToString(), "longview\\" + Dr1["spotd_long_view"].ToString(), false);
-            LoadImage("", HCOL4 , Row, ImagePath, 244, HCOL_MAX_WIDTH - HCOL4 - 3) ;
+            LoadImage("", HCOL4 , Row, ImagePath, 255, HCOL_MAX_WIDTH - HCOL4 - 3) ;
 
             // bottom right
             Row += 244;
             R1++; Row += 4;
+            SetFillRectangle(HCOL4, Row - 1, 246, HCOL3 - HCOL1 -20, 1, "BLACK", "WHITE");
             ImagePath = Lib.getUploadedPath(comp_code, Dr1["spotd_pkid"].ToString(), "finalview\\" + Dr1["spotd_final_view"].ToString(), false);
             LoadImage("", HCOL4, Row, ImagePath, 255, HCOL_MAX_WIDTH - HCOL4 - 3);
             //LoadImage("", HCOL4 , Row, ImagePath, 245, 120 );
@@ -392,9 +397,9 @@ namespace BLPim
 
             R1++; Row += ROW_HT + 2;
 
-            SetFillRectangle(HCOL1 +1, Row, 100, HCOL3 - HCOL1, 1, "BLACK", "WHITE");
+            SetFillRectangle(HCOL1 +1, Row, 135, HCOL3 - HCOL1, 1, "BLACK", "WHITE");
             ImagePath = Lib.getUploadedPath(comp_code, Dr1["spotd_artwork_id"].ToString(), "default\\" + Dr1["spotd_artwork_file_name"].ToString(), false);
-            LoadImage("", HCOL1+1, Row, ImagePath, 145, HCOL3 - HCOL1);
+            LoadImage("", HCOL1+1+50, Row+20 , ImagePath, 80, HCOL3 - HCOL1 );
 
 
 
