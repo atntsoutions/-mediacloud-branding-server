@@ -551,6 +551,7 @@ namespace DataBase
 
         private static Image reesizeImage(Image imgToResize, Size size)
         {
+
             int sourceWidth = imgToResize.Width;
             int sourceHeight = imgToResize.Height;
 
@@ -574,10 +575,14 @@ namespace DataBase
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
             g.DrawImage(imgToResize, 0, 0, destWidth, destHeight);
+            
+
             g.Dispose();
 
             return (Image)b;
         }
+
+
 
 
         private void DrawImage(string ImgName, int x, int y, int height, int width, int stretch, int Pdy)
@@ -589,7 +594,6 @@ namespace DataBase
 
                     Image image = Image.FromFile(ImgName);
                     image = reesizeImage(image, new Size(width, height));
-                    //XImage newImage = XImage.FromFile(ImgName);
                     XImage newImage = XImage.FromGdiPlusImage(image);
                     if (height > 0 && width > 0)
                         gfx.DrawImage(newImage,x,y, image.Width, image.Height);
