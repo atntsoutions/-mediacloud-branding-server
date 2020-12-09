@@ -129,6 +129,8 @@ namespace WebApiServer.Controllers
 
                 string user_code = SearchData["user_code"].ToString();
 
+                string source = SearchData["source"].ToString();
+
                 string ServerReportPath = Lib.GetReportPath(comp_code);
 
                 string ServerImagePath = Lib.GetImagePath(comp_code);
@@ -144,6 +146,7 @@ namespace WebApiServer.Controllers
                 report.comp_code = comp_code;
                 report.user_code = user_code;
                 report.Report_Caption = "Spot Details";
+                report.source = source;
                 report.process();
 
                 string File_Display_Name = "spot-" + report.slno + ".pdf";
@@ -168,6 +171,7 @@ namespace WebApiServer.Controllers
                 RetData.Add("filedisplayname", File_Display_Name);
                 RetData.Add("email_to", report.emails_to);
                 RetData.Add("email_cc", report.emails_cc);
+                RetData.Add("html", report.html);
 
                 return Ok(RetData);
 

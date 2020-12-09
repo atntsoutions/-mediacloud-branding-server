@@ -26,9 +26,12 @@ namespace BLPim
         public string comp_code = "";
         public string user_code = "";
 
-        
+        public string source = "";
 
         private string status = "";
+
+
+        public string html = "";
 
 
         Single x1 = 0;
@@ -140,8 +143,40 @@ namespace BLPim
                 dt_record1 = con.ExecuteQuery(sql);
 
 
-
                 con.CloseConnection();
+
+                html += "<head>";
+                html += "<style>";
+                html += "table, th, td { ";
+                html += " border: 1px solid black; ";
+                html += " border-collapse: collapse;";
+                html += "}";
+
+                html += "th, td { ";
+                html += " padding: 15px; ";
+                html += "} ";
+
+                html += "th { ";
+                html += " text-align: left; ";
+                html += "} ";
+                html += "</style>";
+                html += "</head>";
+
+                html += "<table>";
+                html += "<tr>";
+                html += "<td>SL#</td>";
+                html += "<td>SPOT-NAME</td>";
+                html += "<td>STATUS</td>";
+                html += "</tr>";
+                foreach ( DataRow Dr in dt_record1.Rows) 
+                {
+                    html += "<tr>";
+                    html += "<td>" + Dr["spotd_slno"].ToString() + "</td>";
+                    html += "<td>" + Dr["spotd_name"].ToString() + "</td>";
+                    html += "<td>" + Dr["spotd_status"].ToString() + "</td>";
+                    html += "</tr>";
+                }
+                html += "</table>";
             } 
             catch ( Exception ex )
             {

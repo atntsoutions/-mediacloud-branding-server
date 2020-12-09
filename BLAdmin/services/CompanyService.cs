@@ -977,13 +977,16 @@ namespace BLAdmin
             mailhistory mRow;
 
             string pkid = SearchData["pkid"].ToString();
+            string mailsource = SearchData["mailsource"].ToString();
             try
             {
 
                 DataTable Dt_List = new DataTable();
                 sql = "";
                 sql += " select  mail_pkid, mail_date, mail_source, mail_source_id, mail_send_by, mail_send_to,mail_send_cc, mail_refno, mail_comments, mail_files from mailhistory  ";
-                sql += " where mail_source_id ='" + pkid + "' order by mail_date";
+                sql += " where mail_source_id ='" + pkid + "'";
+                sql += " and  mail_source ='" + mailsource + "'";
+                sql += " order by mail_date";
 
                 Dt_List = Con_Oracle.ExecuteQuery(sql);
                 Con_Oracle.CloseConnection();
@@ -1122,8 +1125,8 @@ namespace BLAdmin
 
                 Dictionary<string, object> SearchData = new Dictionary<string, object>();
 
-                Record.mail_send_to = "joy@cargomar.in";
-                Record.mail_send_cc = "joycok@gmail.com";
+                //Record.mail_send_to = "joy@cargomar.in";
+                //Record.mail_send_cc = "joycok@gmail.com";
 
                 SearchData.Add("to_ids", Record.mail_send_to);
                 SearchData.Add("cc_ids", Record.mail_send_cc);

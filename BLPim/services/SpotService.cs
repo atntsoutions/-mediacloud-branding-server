@@ -220,8 +220,8 @@ namespace BLPim
 
                 sql2 = "select  spotd_pkid, spotd_parent_id, spotd_name ,spotd_slno,spotd_uom, spotd_wd, spotd_ht, ";
                 sql2 += " spotd_artwork_id, artwork.param_name as spotd_artwork_name, artwork.param_slno as spotd_artwork_slno,artwork.param_file_name as spotd_artwork_file_name,";
-                sql2 += " spotd_product_id, product.param_name as spotd_product_name, ";
-                sql2 += " spotd_close_view, spotd_long_view, spotd_final_view ";
+                sql2 += " spotd_product_id, product.param_name as spotd_product_name,  ";
+                sql2 += " spotd_close_view, spotd_long_view, spotd_final_view, spotd_status ";
                 sql2 += " from pim_spotd a  ";
                 sql2 += " left join param artwork on a.spotd_artwork_id = artwork.param_pkid ";
                 sql2 += " left join param product on a.spotd_product_id = product.param_pkid ";
@@ -290,6 +290,8 @@ namespace BLPim
                     mRowd.spotd_uom = Dr["spotd_uom"].ToString();
                     mRowd.spotd_wd = Lib.Convert2Decimal(Dr["spotd_wd"].ToString());
                     mRowd.spotd_ht = Lib.Convert2Decimal(Dr["spotd_ht"].ToString());
+
+                    mRowd.spotd_status = Dr["spotd_status"].ToString();
 
                     mRowd.spotd_artwork_id = Dr["spotd_artwork_id"].ToString();
                     mRowd.spotd_artwork_name = Dr["spotd_artwork_name"].ToString();
